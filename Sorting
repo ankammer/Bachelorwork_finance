@@ -1,5 +1,16 @@
 #Sorting of raw data, 
-#First erasing incomplete lines from origninal data
+#First erasing not usable collumns from origninal data
 
 > data2 <- data_FinanzenBSC_2026_11_05_11_02 #open new dataframe
 > str(data2) #viewing structure
+
+library(dplyr)
+
+new_data2 <- data2 %>% select(-c(1,2,3,4,5,6))
+
+new_data3 <- filter(new_data2, STATUS == "complete") #erasing lines marked incomplete via socisurvey
+new_data4 <- new_data3 %>% select(-c(51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74)) erase furthe collumns not usable for analysis
+
+
+new_data5 <- new_data4 %>%
++     dplyr::filter(SD02_01 > 24,SD02_01 < 55) #filtering false ages
