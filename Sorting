@@ -1,0 +1,5 @@
+#Sorting of raw data, 
+#First erasing incomplete lines from origninal data
+
+> data2 <- data_FinanzenBSC_2026_11_05_11_02 #open new dataframe
+> str(data2) #viewing structure
