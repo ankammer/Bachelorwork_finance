@@ -11,7 +11,7 @@ new_data6 <- new_data5 %>%
 
 #factoring for further analysis
 new_data6$Einkommen <- factor(
-     new_data6$Einkommen_Label, 
+     new_data6$Einkommen, 
      levels = c(
          "bis 1.500 €", 
          "1.501 € bis 2.000 €", 
