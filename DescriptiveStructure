@@ -1,0 +1,22 @@
+#renaming and adding new collumn 'Einkommen', original labels from Socisurvey
+new_data6 <- new_data5 %>% 
+     dplyr::mutate(Einkommen = dplyr::case_when(
+        SO16 == 12 ~ "bis 1.500 €",
+        SO16 == 6  ~ "1.501 € bis 2.000 €",
+         SO16 == 7  ~ "2001 bis 3.000 €",
+         SO16 == 8  ~ "3001 bis 4000 €",
+         SO16 == 11 ~ "über 4001 €",
+         TRUE       ~ "-9"  # Fängt alle anderen Werte (wie z.B. -9) ab
+     ))
+
+#factoring for further analysis
+new_data6$Einkommen <- factor(
+     new_data6$Einkommen_Label, 
+     levels = c(
+         "bis 1.500 €", 
+         "1.501 € bis 2.000 €", 
+         "2001 bis 3.000 €", 
+         "3001 bis 4000 €", 
+         "über 4001 €", 
+         "-9"
+     ))
