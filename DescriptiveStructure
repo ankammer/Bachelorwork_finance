@@ -108,3 +108,34 @@ Verteilung_Alter %>%  # 4. Häufigkeiten der Gruppen zählen
          align = "lrr",
          caption = "Häufigkeitsverteilung der Altersgruppen (ab 25 Jahre bis 55 Jahre)"
      )
+
+
+
+new_data6$Ausbildung <- factor(
+  new_data6$SO11,
+  levels = c(8, 1, 2, 3, 4, 6, 9, 7),
+  labels = c(
+    "Schule beendet ohne Abschluss",
+    "Hauptschulabschluss",
+    "Mittlere Reife / Realschulabschluss",
+    "Abgeschlossene Lehre",
+    "Fachabitur / Abitur",
+    "Fachhochschul-/Hochschulabschluss (Bachelor)",
+    "Fachhochschul-/Hochschulabschluss (Master)",
+    "Promotion"
+  )
+)
+
+# 2. Häufigkeitstabelle für 'Ausbildung' erstellen
+Haeufigkeitstabelle_Ausbildung <- setNames(
+  transform(
+    as.data.frame(table(new_data6$Ausbildung)),
+    Prozent = round(Freq / sum(Freq) * 100, 2),
+    Kumuliert_Anzahl = cumsum(Freq),
+    Kumuliert_Prozent = round(cumsum(Freq / sum(Freq) * 100), 2)
+  ),
+  c("Ausbildung", "Anzahl", "Prozent", "Kumuliert_Anzahl", "Kumuliert_Prozent")
+)
+
+# 3. Tabelle ausgeben
+print(Haeufigkeitstabelle_Ausbildung)
