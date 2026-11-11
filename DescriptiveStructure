@@ -1,3 +1,6 @@
+library(dplyr)
+library(Knitr)
+
 #renaming and adding new collumn 'Einkommen', original labels from Socisurvey
 new_data6 <- new_data5 %>% 
      dplyr::mutate(Einkommen = dplyr::case_when(
@@ -20,3 +23,40 @@ new_data6$Einkommen <- factor(
          "über 4001 €", 
          "-9"
      ))
+
+#create descriptive Overview of the salary (Einkommen)
+
+Haeufigkeitstabelle_Einkommen <- setNames(
+  transform(
+    as.data.frame(table(new_data6$Einkommen)),
+    Prozent = round(Freq / sum(Freq) * 100, 2),
+    Kumuliert_Anzahl = cumsum(Freq),
+    Kumuliert_Prozent = round(cumsum(Freq / sum(Freq) * 100), 2)
+  ),
+  c("Gehaltsklasse", "Anzahl", "Prozent", "Kumuliert_Anzahl", "Kumuliert_Prozent")
+)
+
+print(Haeufigkeitstabelle_Einkommen)
+
+
+#the same for the gender
+
+new_data6 <- new_data6 %>% 
+     dplyr::mutate(Geschlecht = dplyr::case_when(
+         SD01 == 1 ~ "Männlich",
+         SD01 == 2  ~ "Weiblich", 
+         SD01 == 3  ~ "Divers",
+         SD01 == 4  ~ "keine Angabe",
+         
+         TRUE       ~ "-9"  # Fängt alle anderen Werte (wie z.B. -9) ab
+     ))
+
+new_data6$Geschlecht <- factor(
+      new_data6$Geschlecht, 
+      levels = c(
+          "Männlich", 
+          "Weiblich", 
+          "Divers", 
+          "keine Angabe", 
+           "-9"
+      ))
