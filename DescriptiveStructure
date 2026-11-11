@@ -139,3 +139,57 @@ Haeufigkeitstabelle_Ausbildung <- setNames(
 
 # 3. Tabelle ausgeben
 print(Haeufigkeitstabelle_Ausbildung)
+
+
+#Angestelltenverhältnis, allgemeine Auflistung
+
+# 1. Die Spalten aus deinem Screenshot auswählen
+spalten_so14 <- c("SO14_10", "SO14_03", "SO14_04", "SO14_06", "SO14_08", "SO14_09")
+
+# 2. Sprechende Beschriftungen für die Tabelle festlegen
+labels_so14 <- c(
+  "Ausbildungsgehalt",
+  "Student/in",
+  "Angestellte/r oder Beamte/r",
+  "Selbstständig",
+  "Freiberuflich",
+  "zusätzlich nebenberuflich"
+)
+
+# 3. Häufigkeiten berechnen
+# WICHTIG: Bei SoSci Survey ist '2' oft "ausgewählt" (und '1' "nicht ausgewählt"). 
+# Falls bei dir '1' = ausgewählt ist, ändere die '2' in der nächsten Zeile einfach zu '1'!
+anzahl <- colSums(new_data6[, spalten_so14] == 2, na.rm = TRUE)
+
+# Gesamtzahl der gültigen Fälle (Personen, die die Frage beantwortet haben)
+gueltige_faelle <- sum(rowSums(!is.na(new_data6[, spalten_so14])) > 0)
+
+# 4. Übersichtstabelle zusammenbauen
+Haeufigkeitstabelle_Beschaeftigung <- data.frame(
+  Beschaeftigung = labels_so14,
+  Anzahl = as.vector(anzahl),
+  Prozent_der_Faelle = round(as.vector(anzahl) / gueltige_faelle * 100, 2),
+  Prozent_der_Antworten = round(as.vector(anzahl) / sum(anzahl) * 100, 2)
+)
+
+# 5. Tabelle ausgeben
+print(Haeufigkeitstabelle_Beschaeftigung)
+
+
+#Kombinationen
+# Kurze Labels für die Kombinationen
+labels_kurz <- c("Ausbildung", "Student", "Angestellt/Beamte", "Selbstständig", "Freiberuflich", "Nebenberuflich")
+
+# Für jede Person die gewählten Optionen als Text verbinden (auch hier ggf. '2' zu '1' ändern)
+kombinationen <- apply(new_data6[, spalten_so14] == 2, 1, function(zeile) {
+  ausgewaehlt <- labels_kurz[which(zeile)]
+  if (length(ausgewaehlt) == 0) return("Keine Auswahl")
+  paste(ausgewaehlt, collapse = " + ")
+})
+
+# Tabelle der Kombinationen (absteigend nach Häufigkeit sortiert)
+Tabelle_Kombinationen <- as.data.frame(sort(table(kombinationen), decreasing = TRUE))
+names(Tabelle_Kombinationen) <- c("Kombination", "Anzahl")
+Tabelle_Kombinationen$Prozent <- round(Tabelle_Kombinationen$Anzahl / sum(Tabelle_Kombinationen$Anzahl) * 100, 2)
+
+print(Tabelle_Kombinationen)
