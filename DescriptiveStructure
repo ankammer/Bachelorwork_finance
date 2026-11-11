@@ -75,3 +75,36 @@ Verteilung_Geschlecht %>%
          align = "lrr",                                         # l = linksbündig, r = rechtsbündig
          caption = "Tabelle 1: Geschlechterverteilung im Datensatz" # Dein Titel!
      )
+
+
+Haeufigkeitstabelle_Alter <- setNames(
+     transform(
+     as.data.frame(table(new_data6$SD02_01)),
+         Prozent = round(Freq / sum(Freq) * 100, 2),
+         Kumuliert_Anzahl = cumsum(Freq),
+         Kumuliert_Prozent = round(cumsum(Freq / sum(Freq) * 100), 2)
+     ),
+     c("Alter", "Anzahl", "Prozent", "Kumuliert_Anzahl", "Kumuliert_Prozent")
+ )
+
+print(Haeufigkeitstabelle_Alter)
+Verteilung_Alter <- new_data6 %>%
+    
+    dplyr::mutate(SD02_01 = as.numeric(as.character(SD02_01))) %>%
+     dplyr::mutate(Altersgruppe = cut(SD02_01, 
+                                      breaks = seq(25, 55, by = 5), 
+                                      right = FALSE))
+
+
+Verteilung_Alter %>%  # 4. Häufigkeiten der Gruppen zählen
+    dplyr::count(Altersgruppe) %>%
+    
+     # 5. Prozentanteile berechnen und runden
+     dplyr::mutate(Prozent = round((n / sum(n)) * 100, 2)) %>%
+     
+     # 6. Als schöne Tabelle mit Titel ausgeben
+     knitr::kable(
+         col.names = c("Altersgruppe", "Anzahl (n)", "Anteil (%)"),
+         align = "lrr",
+         caption = "Häufigkeitsverteilung der Altersgruppen (ab 25 Jahre bis 55 Jahre)"
+     )
