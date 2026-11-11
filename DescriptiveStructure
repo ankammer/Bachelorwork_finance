@@ -60,3 +60,18 @@ new_data6$Geschlecht <- factor(
           "keine Angabe", 
            "-9"
       ))
+
+Verteilung_Geschlecht <- new_data6 %>% 
+     dplyr::count(Geschlecht) %>% 
+     dplyr::mutate(
+         Prozent = (n / sum(n)) * 100,
+         Prozent_Gerundet = round(Prozent, 2) # Optional: Auf 2 Nachkommastellen runden
+     )
+
+Verteilung_Geschlecht %>% 
+    dplyr::select(Geschlecht, n, Prozent_Gerundet) %>% 
+     knitr::kable(
+         col.names = c("Geschlecht", "Anzahl (n)", "Anteil (%)"), # Schöne Spaltennamen
+         align = "lrr",                                         # l = linksbündig, r = rechtsbündig
+         caption = "Tabelle 1: Geschlechterverteilung im Datensatz" # Dein Titel!
+     )
