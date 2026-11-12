@@ -21,21 +21,25 @@ kreuztabelle_Alter <- table(
   Alter = as.numeric(new_data6$SD02_01),
   exclude = "-9"
 )
+> print(addmargins(kreuztabelle_Alter))
+
 
 #alter in 5er Schritten nach Vorbild Treu, 2026
-alter_gruppen <- cut(
+> # 1. Alter von 25 bis 55 in 5er-Schritte einteilen
+> alter_gruppen <- cut(
 +     as.numeric(new_data6$SD02_01),
-+     breaks = c(25, 30, 35, 40, 45, 50, 55, 60, 65, 120),
-+     labels = c( "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65+"),
-+     right = FALSE
++     breaks = c(25, 30, 35, 40, 45, 50, 55),
++     labels = c("25-30", "30-35", "35-40", "40-45", "45-50", "50-55"),
++     right = FALSE,
++     include.lowest = TRUE
 + )
 > 
-> # 2. Kreuztabelle mit absoluten Zahlen und Randsummen erstellen (ohne -9)
+> # 2. Kreuztabelle mit absoluten Zahlen und Randsummen erstellen
 > kreuztabelle_Alter <- table(
 +     Einkommen = new_data6$Einkommen, 
 +     Alter = alter_gruppen,
 +     exclude = "-9"
 + )
-> print(kreuztabelle_Alter)
+>kreuztabelle_Alter_prozent <- round(prop.table(kreuztabelle_Alter) * 100, 1)
+print(addmargins(kreuztabelle_Alter_prozent))
 
-print(addmargins(kreuztabelle_Alter))
