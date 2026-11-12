@@ -1,0 +1,13 @@
+#Geschlecht und Einkommen
+kreuztabelle_anzahl <- table(Einkommen = new_data6$Einkommen, Geschlecht = new_data6$Geschlecht)
+kreuztabelle_bereinigt <- kreuztabelle_anzahl[
+    rownames(kreuztabelle_anzahl) != "-9", 
+    colnames(kreuztabelle_anzahl) != "-9"
+ ]
+print(addmargins(kreuztabelle_bereinigt))
+
+#Anzahl Prozent pro Geschlecht
+print(round(prop.table(kreuztabelle_bereinigt, margin = 2) * 100, 1))
+
+#Anzahl Prozent über Gesamtpopulation
+print(round(prop.table(kreuztabelle_bereinigt) * 100, 1))
