@@ -1,0 +1,85 @@
+# 1. Alter als numerische Variable extrahieren und -9 (nicht beantwortet) entfernen
+> alter_clean <- as.numeric(new_data6$SD02_01)
+> alter_clean <- alter_clean[alter_clean != -9 & !is.na(alter_clean)]
+> 
+> # 2. Kennzahlen berechnen
+> Median2 <- median(alter_clean)
+> minimum <- min(alter_clean)
+> maximum <- max(alter_clean)
+> 
+> # 3. Boxplot zeichnen (mit etwas Platz nach oben/unten für Beschriftungen)
+> boxplot(
++     alter_clean,
++     main = "Altersverteilung (Boxplot mit Median und Extrema)",
++     ylab = "Alter in Jahren",
++     col = "lightblue",
++     border = "darkblue",
++     ylim = c(minimum - 3, maximum + 3)
++ )
+
+
+fürs Einkommen
+
+# 2. Häufigkeiten und Prozente berechnen
+> anzahl <- table(einkommen_clean)
+> prozent <- round(prop.table(anzahl) * 100, 1)
+> 
+> # 3. Ränder anpassen, damit lange Beschriftungen gut lesbar sind
+> par(mar = c(8, 4, 4, 2))
+> 
+> # 4. Balkendiagramm zeichnen
+> bp <- barplot(
++     anzahl,
++     main = "Verteilung nach Einkommenskategorien",
++     ylab = "Anzahl der Befragten",
++     col = "steelblue",
++     border = "darkblue",
++     las = 2, # Beschriftung der X-Achse drehen
++     ylim = c(0, max(anzahl) * 1.15) # Platz nach oben für die Zahlen
++ )
+
+
+#Ausbildung
+
+# 1. Daten bereinigen (-9 und NAs entfernen)
+ausbildung_clean <- droplevels(as.factor(new_data6$Ausbildung[new_data6$Ausbildung != "-9" & !is.na(new_data6$Ausbildung)]))
+
+# 2. Häufigkeiten und Prozente berechnen
+anzahl <- table(ausbildung_clean)
+prozent <- round(prop.table(anzahl) * 100, 1)
+
+# 3. Ränder anpassen: unten=5, links=17, oben=4, rechts=6
+par(mar = c(5, 17, 4, 6))
+
+# 4. Horizontales Balkendiagramm ohne Standard-Labels zeichnen
+bp <- barplot(
+  anzahl,
+  horiz = TRUE,
+  names.arg = "", # Standard-Labels ausblenden
+  main = "Verteilung nach Ausbildungsabschluss",
+  xlab = "Anzahl der Befragten",
+  col = "steelblue",
+  border = "darkblue",
+  xlim = c(0, max(anzahl) * 1.45)
+)
+
+# 5. Links-bündige Beschriftung der Y-Achse setzen (adj = 0 bedeutet linksbündig)
+mtext(
+  text = names(anzahl),
+  side = 2,
+  line = 16, # Abstand vom Balken nach links (entspricht fast dem linken Rand)
+  at = bp,
+  las = 1,
+  adj = 0,
+  cex = 0.85
+)
+
+# 6. Anzahl und Prozent rechts neben die Balken schreiben
+text(
+  x = anzahl,
+  y = bp,
+  labels = paste0(" ", anzahl, " (", prozent, "%)"),
+  pos = 4,
+  cex = 0.85,
+  xpd = TRUE
+)
