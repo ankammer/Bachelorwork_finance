@@ -22,4 +22,20 @@ kreuztabelle_Alter <- table(
   exclude = "-9"
 )
 
+#alter in 5er Schritten nach Vorbild Treu, 2026
+alter_gruppen <- cut(
++     as.numeric(new_data6$SD02_01),
++     breaks = c(25, 30, 35, 40, 45, 50, 55, 60, 65, 120),
++     labels = c( "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65+"),
++     right = FALSE
++ )
+> 
+> # 2. Kreuztabelle mit absoluten Zahlen und Randsummen erstellen (ohne -9)
+> kreuztabelle_Alter <- table(
++     Einkommen = new_data6$Einkommen, 
++     Alter = alter_gruppen,
++     exclude = "-9"
++ )
+> print(kreuztabelle_Alter)
+
 print(addmargins(kreuztabelle_Alter))
