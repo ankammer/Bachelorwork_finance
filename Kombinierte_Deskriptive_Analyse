@@ -11,3 +11,15 @@ print(round(prop.table(kreuztabelle_bereinigt, margin = 2) * 100, 1))
 
 #Anzahl Prozent über Gesamtpopulation
 print(round(prop.table(kreuztabelle_bereinigt) * 100, 1))
+
+
+#Alter und Einkommen
+
+
+kreuztabelle_Alter <- table(
+  Einkommen = new_data6$Einkommen, 
+  Alter = as.numeric(new_data6$SD02_01),
+  exclude = "-9"
+)
+
+print(addmargins(kreuztabelle_Alter))
