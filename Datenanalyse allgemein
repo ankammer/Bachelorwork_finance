@@ -1,0 +1,33 @@
+library(psych)
+library(dplyr)
+
+#Wohlbefinden
+# 1. Alte Berechnungsspalten aus new_data7 entfernen, falls vorhanden
+new_data7 <- new_data7 %>%
+  select(-any_of(c("BBCore_Summe", "BBCore_Mean", "BBCore_Score")))
+
+# 2. NUR die 23 nummerierten Items auswählen (durch \\d+$ am Ende!)
+bb_daten <- new_data7 %>%
+  select(matches("^BB_?core_\\d+$", ignore.case = TRUE)) %>%
+  mutate(across(everything(), ~ as.numeric(as.factor(.))))
+
+# 3. Sicherheitscheck: Wie viele Spalten wurden gewählt? (Muss 23 sein!)
+cat("Anzahl ausgewählter Spalten:", ncol(bb_daten), "\n")
+cat("Kleinster und größter Wert insgesamt:", min(bb_daten, na.rm = TRUE), "bis", max(bb_daten, na.rm = TRUE), "\n")
+
+# 4. Skalenmittelwert (1 bis 5) berechnen
+skala <- scoreItems(
+  keys = rep(1, ncol(bb_daten)), 
+  items = bb_daten, 
+  totals = FALSE,     # Mittelwert (bleibt garantiert zwischen 1 und 5)
+  missing = TRUE,     
+  impute = "mean"
+)
+
+# 5. Ergebnis speichern und ausgeben
+new_data7$BBCore_Score <- as.numeric(skala$scores)
+
+ergebnis <- describe(new_data7$BBCore_Score, quant = c(0.25, 0.75))
+ergebnis$variance <- var(new_data7$BBCore_Score, na.rm = TRUE)
+
+print(ergebnis)
