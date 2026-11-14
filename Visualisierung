@@ -83,3 +83,83 @@ text(
   cex = 0.85,
   xpd = TRUE
 )
+
+
+Einkommen und Abschluss 
+
+# 1. Saubere Kreuztabelle erstellen
+kreuztabelle_Ausbildung <- table(
+  Einkommen = new_data6$Einkommen, 
+  Ausbildung = droplevels(as.factor(new_data6$Ausbildung)),
+  exclude = "-9"
+)
+
+# 2. Spaltenprozente für die OPTIK (damit alle Balken exakt gleich lang = 100 % sind)
+balken_laenge <- prop.table(kreuztabelle_Ausbildung, margin = 2) * 100
+balken_laenge[is.nan(balken_laenge)] <- 0
+
+# 3. Gesamtprozente für die ZAHLEN (bezogen auf alle 271 Datensätze = 100 %)
+zahlen_gesamt <- prop.table(kreuztabelle_Ausbildung) * 100
+
+# 4. Lange Beschriftungen mit Zeilenumbruch versehen
+labels_links <- gsub(" / ", " /\n", colnames(balken_laenge))
+labels_links <- gsub("\\(", "\n(", labels_links)
+
+# --- EXPORT START: Grafik als breites PNG (1400x650 Pixel) öffnen ---
+png("Einkommen_Ausbildung_GleichLang_Gesamt271.png", width = 1400, height = 650, res = 120)
+
+# 5. Ränder anpassen
+par(oma = c(0, 0, 0, 0), mar = c(5, 16, 4, 11))
+
+# 6. Farbpalette
+farben <- rainbow(nrow(balken_laenge), s = 0.6, v = 0.9)
+
+# 7. Horizontales Balkendiagramm zeichnen (alle Balken gleich lang bis 100 %)
+bp <- barplot(
+  balken_laenge,
+  horiz = TRUE,
+  beside = FALSE,
+  space = 0.4,
+  names.arg = rep("", ncol(balken_laenge)),
+  main = "Einkommensverteilung nach Abschluss (Balken normiert, Zahlen = Anteil an n = 271)",
+  xlab = "Relative Verteilung innerhalb des Abschlusses (Beschriftung = % der Gesamtstichprobe)",
+  col = farben,
+  border = "white",
+  xlim = c(0, 100)
+)
+
+# 8. Gesamtprozente (bezogen auf 271) an die Positionen der gestreckten Abschnitte schreiben
+for (i in seq_len(ncol(balken_laenge))) {
+  optik_werte <- balken_laenge[, i]
+  echte_prozent <- zahlen_gesamt[, i]
+  x_pos <- cumsum(optik_werte) - (optik_werte / 2)
+  
+  # Nur beschriften, wenn der Balkenabschnitt breit genug ist (>= 4 % Balkenbreite)
+  labels_txt <- ifelse(optik_werte >= 4, paste0(round(echte_prozent, 1), "%"), "")
+  text(x = x_pos, y = bp[i], labels = labels_txt, cex = 0.8, col = "black")
+}
+
+# 9. Ausbildungsabschlüsse links zeichnen
+axis(
+  side = 2,
+  at = bp,
+  labels = labels_links,
+  tick = FALSE,
+  las = 1,
+  cex.axis = 0.85
+)
+
+# 10. Legende rechts außerhalb platzieren
+legend(
+  "topright",
+  inset = c(-0.24, 0),
+  legend = rownames(balken_laenge),
+  fill = farben,
+  title = "Einkommen",
+  cex = 0.8,
+  bty = "n",
+  xpd = TRUE
+)
+
+# --- EXPORT ENDE ---
+dev.off()
