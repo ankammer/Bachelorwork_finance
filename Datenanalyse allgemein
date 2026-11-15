@@ -35,6 +35,45 @@ skala <- scoreItems(
 # 5. Ergebnis speichern und ausgeben
 new_data7$BBCore_Score <- as.numeric(skala$scores)
 
+#erste Datenübersicht Finanzielle Selbstwirksamkeit 
+
+library(psych)
+library(dplyr)
+
+# 1. Alte Berechnungsspalte entfernen, falls der Code mehrfach ausgeführt wird
+new_data7 <- new_data7 %>%
+  select(-any_of(c("BB04_Score")))
+
+# 2. NUR die 16 Items BB04_01 bis BB04_16 auswählen und in Zahlen (1 bis 5) umwandeln
+bb04_daten <- new_data7 %>%
+  select(matches("^BB04_\\d+$", ignore.case = TRUE)) %>%
+  mutate(across(everything(), ~ as.numeric(as.factor(.))))
+
+# 3. Kurzer Sicherheitscheck (Muss 16 Spalten und Werte von 1 bis 5 anzeigen)
+cat("Anzahl ausgewählter Spalten:", ncol(bb04_daten), "\n")
+cat("Wertebereich:", min(bb04_daten, na.rm = TRUE), "bis", max(bb04_daten, na.rm = TRUE), "\n")
+
+# 4. Skalenmittelwert (1 bis 5) und Cronbachs Alpha berechnen
+skala_bb04 <- scoreItems(
+  keys = rep(1, ncol(bb04_daten)), 
+  items = bb04_daten, 
+  totals = FALSE,     # Mittelwert (bleibt garantiert zwischen 1 und 5)
+  missing = TRUE,     
+  impute = "mean"
+)
+
+# 5. Skalenwert in new_data7 speichern
+new_data7$BB04_Score <- as.numeric(skala_bb04$scores)
+
+# 6. Ausgabe 1: Cronbachs Alpha & Trennschärfen
+print(skala_bb04)
+
+# 7. Ausgabe 2: Mittelwert, SD, Median, 25%- & 75%-Quartil und Varianz
+ergebnis_bb04 <- describe(new_data7$BB04_Score, quant = c(0.25, 0.75))
+ergebnis_bb04$variance <- var(new_data7$BB04_Score, na.rm = TRUE)
+
+print(ergebnis_bb04)
+
 ergebnis <- describe(new_data7$BBCore_Score, quant = c(0.25, 0.75))
 ergebnis$variance <- var(new_data7$BBCore_Score, na.rm = TRUE)
 
