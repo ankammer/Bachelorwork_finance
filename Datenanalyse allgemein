@@ -1,6 +1,14 @@
 library(psych)
 library(dplyr)
 
+Spaltennamen umbenennen
+new_data7 <- new_data6 %>%
++     rename_with(
++         .fn = ~ sprintf("BBCore_%02d", seq_along(.)), 
++         .cols = matches("^BB0[12]_\\d+$", ignore.case = TRUE)
++     )
+> view(new_data7)
+
 #Wohlbefinden
 # 1. Alte Berechnungsspalten aus new_data7 entfernen, falls vorhanden
 new_data7 <- new_data7 %>%
