@@ -163,3 +163,46 @@ legend(
 
 # --- EXPORT ENDE ---
 dev.off()
+
+#zur Vollständigkeit auch Geschlecht
+> library(ggplot2)
+> 
+> df_geschlecht <- as.data.frame(table(Einkommen = new_data6$Einkommen, Geschlecht = new_data6$Geschlecht, exclude = "-9"))
+> colnames(df_geschlecht) <- c("Einkommen", "Geschlecht", "Anzahl")
+> df_geschlecht <- subset(df_geschlecht, Anzahl > 0)
+> df_geschlecht$Gesamt <- round(df_geschlecht$Anzahl / sum(df_geschlecht$Anzahl) * 100, 1)
+> df_geschlecht$Anteil <- ave(df_geschlecht$Anzahl, df_geschlecht$Geschlecht, FUN = function(x) x / sum(x) * 100)
+> 
+> ggplot(df_geschlecht, aes(x = Geschlecht, y = Anzahl, fill = Einkommen)) +
++     geom_col(position = "fill", color = "white", width = 0.6) +
++     geom_text(aes(label = ifelse(Anteil >= 4, paste0(Gesamt, "%"), "")), position = position_fill(vjust = 0.5), size = 3.5) +
++     coord_flip() +
++     scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), labels = c("0%", "25%", "50%", "75%", "100%")) +
++     labs(
++         title = "Einkommen nach Geschlecht",
++         subtitle = "Balken auf 100 % normiert | Zahlen = Anteil an Gesamtstichprobe (n = 271)",
++         x = NULL,
++         y = "Verteilung innerhalb des Geschlechts"
++     ) +
++     theme_minimal()
+
+#kreuztabelle KOmbination Einkommen und Beschäftigungsverhältnis
+ library(ggplot2)
+> 
+> spalten_so14 <- c("SO14_10", "SO14_03", "SO14_04", "SO14_06", "SO14_08", "SO14_09")
+> labels_kurz <- c("Ausbildung", "Student", "Angestellt", "Selbststaendig", "Freiberuflich", "Nebenberuflich")
+> 
+> new_data6$Job <- apply(new_data6[, spalten_so14] == 2, 1, function(z) paste(labels_kurz[which(z)], collapse = " + "))
+> new_data6$Job[new_data6$Job == ""] <- NA
+> 
+> df_plot <- as.data.frame(table(Einkommen = new_data6$Einkommen, Job = new_data6$Job, exclude = "-9"))
+> colnames(df_plot) <- c("Einkommen", "Job", "Anzahl")
+> df_plot <- subset(df_plot, Anzahl > 0)
+> df_plot$Gesamt <- round(df_plot$Anzahl / sum(df_plot$Anzahl) * 100, 1)
+> df_plot$Anteil <- ave(df_plot$Anzahl, df_plot$Job, FUN = function(x) x / sum(x) * 100)
+> 
+> ggplot(df_plot, aes(x = Job, y = Anzahl, fill = Einkommen)) +
++     geom_col(position = "fill", color = "white") +
++     geom_text(aes(label = ifelse(Anteil >= 4, paste0(Gesamt, "%"), "")), position = position_fill(vjust = 0.5), size = 3) +
++     coord_flip() +
++     theme_minimal()
