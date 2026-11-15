@@ -9,7 +9,7 @@ new_data7 <- new_data6 %>%
 +     )
 > view(new_data7)
 
-#Wohlbefinden
+#Wohlbefinden, vorher fehlerhafte Datengenerierung
 # 1. Alte Berechnungsspalten aus new_data7 entfernen, falls vorhanden
 new_data7 <- new_data7 %>%
   select(-any_of(c("BBCore_Summe", "BBCore_Mean", "BBCore_Score")))
